@@ -1,74 +1,72 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // =====================
-    // HEADER SCROLL
-    // =====================
-    window.addEventListener('scroll', function() {
-        const header = document.getElementById('header');
-        if(window.scrollY > 50) {
-            header.classList.add('scrolled');
+// Menu Mobile
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const mobileMenu = document.getElementById('mobileMenu');
+const body = document.body;
+
+mobileMenuBtn.addEventListener('click', function() {
+    mobileMenu.classList.toggle('active');
+    body.classList.toggle('menu-open');
+    
+    // Altera o ícone do botão
+    const icon = this.querySelector('i');
+    if (mobileMenu.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+    } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
+});
+
+// Fechar o menu ao clicar em um link
+const mobileLinks = document.querySelectorAll('.mobile-menu a');
+mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        body.classList.remove('menu-open');
+        mobileMenuBtn.querySelector('i').classList.remove('fa-times');
+        mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+    });
+});
+
+// FAQ Accordion
+const faqQuestions = document.querySelectorAll('.faq-question');
+
+faqQuestions.forEach(question => {
+    question.addEventListener('click', () => {
+        question.classList.toggle('active');
+        const answer = question.nextElementSibling;
+        if (question.classList.contains('active')) {
+            answer.style.maxHeight = answer.scrollHeight + 'px';
         } else {
-            header.classList.remove('scrolled');
+            answer.style.maxHeight = '0';
         }
     });
+});
 
-    // =====================
-    // SCROLL SUAVE
-    // =====================
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            // Fechar menu mobile quando um link é clicado
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            if (navbarCollapse.classList.contains('show')) {
-                const bsCollapse = new bootstrap.Collapse(navbarCollapse);
-                bsCollapse.hide();
-            }
-            
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
-            
-            if(targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-            }
-        });
+// Smooth Scrolling for Anchor Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        }
     });
+});
 
-    // =====================
-    // WHATSAPP
-    // =====================
-    const whatsappBtn = document.getElementById('whatsappBtn');
-    
-    if(whatsappBtn) {
-        whatsappBtn.addEventListener('click', function(e) {
-            // Dispositivos móveis - tentar abrir app diretamente
-            if(window.innerWidth <= 768) {
-                const phone = '5511963811203';
-                const text = encodeURIComponent('Olá, gostaria de proteger meu imóvel contra leilão');
-                window.location.href = `whatsapp://send?phone=${phone}&text=${text}`;
-                e.preventDefault();
-                
-                // Fallback caso o link direto falhe
-                setTimeout(() => {
-                    if(!document.hidden) {
-                        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
-                    }
-                }, 500);
-            }
-            
-            // Trackeamento para Google Ads (substitua pelo seu ID)
-            if(typeof gtag !== 'undefined') {
-                gtag('event', 'conversion', {
-                    'send_to': 'AW-SEU_ID_AQUI/SEU_LABEL_AQUI',
-                    'value': 1.0,
-                    'currency': 'BRL'
-                });
-            }
-        });
-    }
+// Scroll Progress
+window.addEventListener('scroll', () => {
+    const scrollProgress = document.querySelector('.scroll-progress');
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+    scrollProgress.style.width = scrollPercent + '%';
 });
